@@ -38,26 +38,32 @@ def getPunishments(username) -> list | str | tuple:
             for i in row.find_all("td"):
                 row_list.append(i.find("a").text)
             punishments.append(row_list)
+            match = re.search(r"id=(\d+)", row.find("a")["href"])
+            id  = match.group(1) if match else None
+            row_list.append(id)
         profile = soup.find("table").find("tbody").find("tr").find("img")["src"]
         href = soup.find("table").find("tbody").find("tr").find("a")["href"]
-        match = re.search(r"id=(\d+)", href)
-        id = match.group(1) if match else None
     punishment_classes = []
     for entry in punishments:
         # Parse the date string to a datetime object (UTC)
-        punish_time = datetime.strptime(entry[4], "%B %d, %Y, %H:%M")
+        try: 
+            punish_time = datetime.strptime(entry[4], "%B %d, %Y, %H:%M")
+        except: 
+            punish_time = None
         pardoner_search = re.search(r"Unbanned by (.{3,16})\)", entry[5])
         pardoner = pardoner_search.group(1) if pardoner_search else None
-        print(entry[5].split("(")[0])
-        expiry = (
-            None  # TODO: proper True False and None for expiry
-            if entry[5].startswith("Permanent Ban")
-            else (datetime.strptime(entry[5].split("(")[0].strip(), "%B %d, %Y, %H:%M"))
-        )
+        if entry[5].startswith("Permanent Ban"):
+            expiry = None
+        else:
+            date_str = entry[5].split("(")[0].strip()
+            try:
+                expiry = datetime.strptime(date_str, "%B %d, %Y, %H:%M")
+            except ValueError:
+                expiry = None
         punishment_classes.append(
             Punishment(
                 type=entry[0],
-                id=id,
+                id=entry[6],
                 username=entry[1],
                 moderator=entry[2],
                 reason=entry[3],
