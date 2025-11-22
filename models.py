@@ -7,7 +7,7 @@ Username = Annotated[str, StringConstraints(pattern=r'^[a-zA-Z0-9_]{3,16}$')]
 class PunishTypes(Enum):
     Ban = "Ban"
     Mute = "Mute"
-    Warn = "Warn"
+    Warn = "Warning"
     Kick = "Kick"
 
 class PlayerStatus(Enum):
