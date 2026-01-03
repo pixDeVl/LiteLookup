@@ -22,7 +22,7 @@ class Punishment(BaseModel):
     reason: str
     time: datetime
     expiry: datetime | bool | None = None # datetime = temp ban, bool(False) = perma, None for N/A ie Kick
-    pardoner: Username | None = None
+    pardoner: Username | None | bool = None
     expired: bool | None = None
 
 

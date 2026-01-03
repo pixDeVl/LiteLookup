@@ -51,7 +51,10 @@ def getPunishments(username) -> list | str | tuple:
         except: 
             punish_time = None
         pardoner_search = re.search(r"Unbanned by (.{3,16})\)", entry[5])
+        weird_pardon = entry[5].endswith('(Unbanned)')
         pardoner = pardoner_search.group(1) if pardoner_search else None
+        if weird_pardon and not pardoner: pardoner = weird_pardon 
+        else: None
         if entry[5].startswith("Permanent Ban"):
             expiry = None
         else:
